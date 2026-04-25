@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Browser Terminal | Next-Gen Shell</title>
+    <!-- Xterm.js Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="overlay">
+        <div class="header">
+            <div class="tabs">
+                <div class="tab active"><i class="fas fa-terminal"></i> bash</div>
+                <div class="tab new" onclick="window.open(window.location.href, '_blank')" title="Open New Terminal Tab"><i class="fas fa-plus"></i></div>
+            </div>
+            <div class="title">browser-terminal@localhost</div>
+        </div>
+    </div>
+    
+    <div id="terminal-container"></div>
+    
+    <!-- Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="terminal.js"></script>
+</body>
+</html>

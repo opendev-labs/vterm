@@ -1,0 +1,117 @@
+:root {
+    --bg-dark: #0f172a;
+    --bg-header: rgba(30, 41, 59, 0.8);
+    --border: rgba(255, 255, 255, 0.1);
+    --text-muted: #64748b;
+    --accent: #3b82f6;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--bg-dark);
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 44px;
+    background: var(--bg-header);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    z-index: 100;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    height: 44px;
+    align-items: flex-end;
+}
+
+.tab {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px 8px 0 0;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    border-bottom: none;
+}
+
+.tab:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+.tab.active {
+    background: var(--bg-dark);
+    color: white;
+    border-color: var(--border);
+    position: relative;
+    top: 1px;
+}
+
+.tab.new {
+    background: transparent;
+    font-size: 14px;
+    padding: 8px 12px;
+}
+
+.title {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+}
+
+#terminal-container {
+    position: absolute;
+    top: 44px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.xterm-viewport {
+    background: transparent !important;
+}
