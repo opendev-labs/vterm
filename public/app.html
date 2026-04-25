@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VTerm — Professional Virtual Terminal</title>
+    <meta name="description" content="VTerm is a high-performance, professional virtual terminal for the web, powered by Xterm.js and Node.js.">
+    <meta property="og:title" content="VTerm — Virtual Terminal">
+    <meta property="og:description" content="Professional, high-performance Virtual Terminal for the web. Live at vterm.onrender.com">
+    <!-- Xterm.js Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="overlay">
+        <div class="header">
+            <div class="tabs">
+                <div class="tab active"><i class="fas fa-terminal"></i> bash</div>
+                <div class="tab new" onclick="window.open(window.location.href, '_blank')" title="Open New Terminal Tab"><i class="fas fa-plus"></i></div>
+            </div>
+            <div class="title-container">
+                <div class="title">vterm@localhost</div>
+                <button class="logout-btn" onclick="logout()" title="Disconnect & Logout"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        async function logout() {
+            await fetch('/api/logout');
+            window.location.href = '/login.html';
+        }
+    </script>
+    
+    <div id="terminal-container"></div>
+    
+    <!-- Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="terminal.js"></script>
+</body>
+</html>

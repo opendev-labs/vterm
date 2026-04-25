@@ -1,5 +1,41 @@
-// Initialize Socket.io
-const socket = io();
+// Initialize Socket.io with dynamic targeting
+const urlParams = new URLSearchParams(window.location.search);
+const mode = urlParams.get('mode') || 'cloud';
+const target = urlParams.get('target');
+
+let socket;
+
+async function initTerminal() {
+    // Session check for Cloud mode
+    if (mode === 'cloud') {
+        try {
+            const res = await fetch('/api/session');
+            const data = await res.json();
+            if (!data.authenticated) {
+                window.location.href = '/login.html';
+                return;
+            }
+        } catch (e) {
+            console.error("Auth check failed:", e);
+            window.location.href = '/login.html';
+            return;
+        }
+    }
+
+    // Connect socket based on mode
+    if (mode === 'local' && target) {
+        console.log('Connecting to Local Bridge:', target);
+        socket = io(target);
+    } else {
+        console.log('Connecting to VTerm Cloud...');
+        socket = io();
+    }
+
+    setupSocketHandlers();
+}
+
+function setupSocketHandlers() {
+    if (!socket) return;
 
 // Initialize Xterm.js
 // Note: Global names depend on the CDN version. Typically they are on the window object.
@@ -54,27 +90,38 @@ setTimeout(resizeTerminal, 100);
 // Handle window resizing
 window.addEventListener('resize', resizeTerminal);
 
-// Frontend -> Backend
-term.onData(data => {
-    socket.emit('input', data);
-});
+    // Frontend -> Backend
+    term.onData(data => {
+        socket.emit('input', data);
+    });
 
-// Backend -> Frontend
-socket.on('output', data => {
-    term.write(data);
-});
+    // Backend -> Frontend
+    socket.on('output', data => {
+        term.write(data);
+    });
 
-// Connection status
-socket.on('connect', () => {
-    console.log('Connected to terminal engine.');
-    resizeTerminal();
-});
+    // Connection status
+    socket.on('connect', () => {
+        console.log('Connected to terminal engine.');
+        resizeTerminal();
+    });
 
-socket.on('disconnect', () => {
-    term.write('\r\n\x1b[1;31m[System] Disconnected from shell engine.\x1b[0m\r\n');
-});
+    socket.on('disconnect', () => {
+        term.write('\r\n\x1b[1;31m[System] Disconnected from shell engine.\x1b[0m\r\n');
+    });
+
+    socket.on('connect_error', (err) => {
+        term.write(`\r\n\x1b[1;31m[Error] Failed to connect: ${err.message}\x1b[0m\r\n`);
+        if (mode === 'local') {
+            term.write('\x1b[1;33m[Tip] Ensure your local VTerm backend is running on port 4000.\x1b[0m\r\n');
+        }
+    });
+}
 
 // Focus terminal on click
 document.body.addEventListener('click', () => {
-    term.focus();
+    if (term) term.focus();
 });
+
+// Start the app
+initTerminal();

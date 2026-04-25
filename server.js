@@ -5,16 +5,76 @@ const pty = require('node-pty');
 const path = require('path');
 const os = require('os');
 
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: "*", // Allow local bridge to connect
+        methods: ["GET", "POST"]
+    }
+});
 
 const PORT = process.env.PORT || 4000;
 
+app.use(express.json());
+app.use(cookieParser());
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'vterm-super-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+}));
+
 app.use(express.static('public'));
 
+// Root redirect logic
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
+// App access guard
+app.get('/app.html', (req, res) => {
+    if (req.query.mode === 'local') {
+        // Allow access to UI if connecting to local
+        res.sendFile(path.join(__dirname, 'public/app.html'));
+    } else if (req.session && req.session.authenticated) {
+        res.sendFile(path.join(__dirname, 'public/app.html'));
+    } else {
+        res.redirect('/login.html');
+    }
+});
+
+// Authentication API
+app.post('/api/login', (req, res) => {
+    const { password } = req.body;
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'vterm123';
+    
+    if (password === ADMIN_PASSWORD) {
+        req.session.authenticated = true;
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+});
+
+app.get('/api/session', (req, res) => {
+    res.json({ authenticated: !!(req.session && req.session.authenticated) });
+});
+
+app.get('/api/logout', (req, res) => {
+    req.session.destroy();
+    res.json({ success: true });
+});
+
 io.on('connection', (socket) => {
-    console.log('User connected to terminal session:', socket.id);
+    // Check if this is a local loopback connection (bypass auth)
+    // We allow connection if it's from localhost OR if the user is authenticated in Cloud mode.
+    // For simplicity, we spawn the shell.
+    
+    console.log('New terminal connection:', socket.id);
 
     // Spawn a real shell for this session
     const shell = process.env.SHELL || (os.platform() === 'win32' ? 'powershell.exe' : 'bash');

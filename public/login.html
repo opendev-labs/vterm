@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | VTerm — Professional Virtual Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: auto;
+        }
+
+        .login-container {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 48px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 48px;
+            color: #3b82f6;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            color: #64748b;
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
+
+        .choice-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .choice-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+
+        .choice-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #3b82f6;
+            transform: translateY(-4px);
+        }
+
+        .choice-card.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+
+        .choice-card i {
+            font-size: 24px;
+            color: #64748b;
+            margin-bottom: 12px;
+            transition: color 0.3s;
+        }
+
+        .choice-card.active i, .choice-card:hover i {
+            color: #3b82f6;
+        }
+
+        .choice-card span {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .auth-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .auth-section.visible {
+            display: block;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px 14px 14px 48px;
+            color: white;
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .footer-note {
+            margin-top: 32px;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: -16px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo"><i class="fas fa-terminal"></i></div>
+        <h1>Welcome to VTerm</h1>
+        <p class="subtitle">Professional, High-Performance Virtual Terminal</p>
+
+        <div class="choice-grid">
+            <div class="choice-card active" onclick="selectMode('cloud')">
+                <i class="fas fa-cloud"></i>
+                <span>Cloud Mode</span>
+            </div>
+            <div class="choice-card" onclick="selectMode('local')">
+                <i class="fas fa-network-wired"></i>
+                <span>Local Bridge</span>
+            </div>
+        </div>
+
+        <div id="cloud-auth" class="auth-section visible">
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="cloud-password" placeholder="Access Password" onkeypress="handleKey(event)">
+            </div>
+            <div id="error-msg" class="error-msg">Invalid password. Please try again.</div>
+            <button class="btn" onclick="login()">
+                Connect to Cloud <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <div id="local-auth" class="auth-section">
+            <div class="input-group">
+                <i class="fas fa-link"></i>
+                <input type="text" id="local-url" value="http://localhost:4000" placeholder="Local Backend URL">
+            </div>
+            <button class="btn" onclick="connectLocal()">
+                Connect to Local <i class="fas fa-bolt"></i>
+            </button>
+            <p class="footer-note" style="margin-top: 16px;">Ensure VTerm backend is running locally on port 4000.</p>
+        </div>
+
+        <div class="footer-note">
+            &copy; 2026 opendev-labs. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'cloud';
+
+        function selectMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.choice-card').forEach(card => card.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            document.querySelectorAll('.auth-section').forEach(section => section.classList.remove('visible'));
+            document.getElementById(mode + '-auth').classList.add('visible');
+        }
+
+        function handleKey(e) {
+            if (e.key === 'Enter') login();
+        }
+
+        async function login() {
+            const password = document.getElementById('cloud-password').value;
+            const errorMsg = document.getElementById('error-msg');
+            
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = '/app.html?mode=cloud';
+                } else {
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                errorMsg.innerText = "Connection error. Is the server running?";
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        function connectLocal() {
+            const url = document.getElementById('local-url').value;
+            window.location.href = `/app.html?mode=local&target=${encodeURIComponent(url)}`;
+        }
+
+        // Check if already authenticated
+        async function checkSession() {
+            try {
+                const res = await fetch('/api/session');
+                const data = await res.json();
+                if (data.authenticated) {
+                    // Optionally auto-redirect or just stay here
+                }
+            } catch(e) {}
+        }
+        checkSession();
+    </script>
+</body>
+</html>
