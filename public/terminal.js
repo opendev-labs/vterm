@@ -25,10 +25,16 @@ async function initTerminal() {
     // Connect socket based on mode
     if (mode === 'local' && target) {
         console.log('Connecting to Local Bridge:', target);
-        socket = io(target);
+        socket = io(target, { 
+            transports: ['websocket'],
+            upgrade: false
+        });
     } else {
         console.log('Connecting to VTerm Cloud...');
-        socket = io();
+        socket = io({
+            transports: ['websocket'],
+            upgrade: false
+        });
     }
 
     setupSocketHandlers();

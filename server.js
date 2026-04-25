@@ -13,8 +13,10 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: "*", // Allow local bridge to connect
-        methods: ["GET", "POST"]
-    }
+        methods: ["GET", "POST"],
+        credentials: true
+    },
+    transports: ['websocket', 'polling']
 });
 
 const PORT = process.env.PORT || 4000;
