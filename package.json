@@ -13,7 +13,7 @@
     "validate": "bash validate-shell.sh"
   },
   "keywords": [],
-  "author": "",
+  "author": "opendev-labs <yashramteke55555@gmail.com>",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {

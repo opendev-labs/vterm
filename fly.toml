@@ -1,4 +1,4 @@
-app = "webterm"
+app = "vterm"
 primary_region = "ewr"
 
 [build]
