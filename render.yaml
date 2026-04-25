@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: webterm
+    runtime: docker
+    repo: https://github.com/opendev-labs/webterm
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 4000
