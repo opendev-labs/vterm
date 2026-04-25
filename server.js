@@ -9,7 +9,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 app.use(express.static('public'));
 
@@ -17,19 +17,22 @@ io.on('connection', (socket) => {
     console.log('User connected to terminal session:', socket.id);
 
     // Spawn a real shell for this session
-    const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
+    const shell = process.env.SHELL || (os.platform() === 'win32' ? 'powershell.exe' : 'bash');
     const ptyProcess = pty.spawn(shell, [], {
         name: 'xterm-color',
         cols: 80,
         rows: 30,
-        cwd: process.env.HOME,
+        cwd: process.env.HOME || process.cwd(),
         env: process.env
     });
 
     // Send shell data to client
-    ptyProcess.on('data', (data) => {
-        socket.emit('output', data);
-    });
+    // Support both .on('data') and .onData()
+    if (typeof ptyProcess.onData === 'function') {
+        ptyProcess.onData((data) => socket.emit('output', data));
+    } else {
+        ptyProcess.on('data', (data) => socket.emit('output', data));
+    }
 
     // Receive input from client
     socket.on('input', (data) => {
@@ -37,21 +40,27 @@ io.on('connection', (socket) => {
     });
 
     // Handle terminal resize
-    socket.on('resize', ({ cols, rows }) => {
+    socket.on('resize', (size) => {
+        const { cols, rows } = size || { cols: 80, rows: 30 };
         ptyProcess.resize(cols, rows);
     });
 
     socket.on('disconnect', () => {
         console.log('User disconnected. Killing shell.');
-        ptyProcess.kill();
+        try {
+            ptyProcess.kill();
+        } catch (e) {
+            console.error('Error killing process:', e);
+        }
     });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`
-📟 Browser Terminal is LIVE!
+🚀 WebTerm is LIVE!
 ---------------------------------------------
-Local URL: http://localhost:${PORT}
+Environment: ${process.env.NODE_ENV || 'development'}
+Port: ${PORT}
 ---------------------------------------------
 Open this URL in multiple tabs for multiple 
 independent terminal sessions.
