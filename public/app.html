@@ -12,8 +12,37 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="vfx.js"></script>
 </head>
 <body>
+    <div id="settings-panel" class="settings-panel">
+        <div class="settings-header">
+            <h3><i class="fas fa-sliders-h"></i> Terminal Settings</h3>
+            <button class="close-settings" onclick="toggleSettings()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="settings-group">
+            <label>Theme</label>
+            <select id="setting-theme" onchange="applySettings()">
+                <option value="default">VTerm Dark (Default)</option>
+                <option value="matrix">Matrix (Green)</option>
+                <option value="dracula">Dracula (Purple)</option>
+                <option value="solarized">Solarized (Light)</option>
+            </select>
+        </div>
+        <div class="settings-group">
+            <label>Font Size (<span id="font-size-val">15</span>px)</label>
+            <input type="range" id="setting-font-size" min="10" max="24" value="15" oninput="applySettings()">
+        </div>
+        <div class="settings-group">
+            <label>UI Opacity</label>
+            <input type="range" id="setting-opacity" min="50" max="100" value="80" oninput="applySettings()">
+        </div>
+        <div class="settings-footer">
+            <button class="btn-save" onclick="saveSettings()">Save Configuration</button>
+        </div>
+    </div>
     <div id="overlay">
         <div class="header">
             <div class="tabs">
@@ -22,7 +51,8 @@
             </div>
             <div class="title-container">
                 <div class="title">vterm@localhost</div>
-                <button class="logout-btn" onclick="logout()" title="Disconnect & Logout"><i class="fas fa-sign-out-alt"></i></button>
+                <button class="header-btn" onclick="toggleSettings()" title="Terminal Settings"><i class="fas fa-cog"></i></button>
+                <button class="header-btn logout-btn" onclick="logout()" title="Disconnect & Logout"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </div>
     </div>

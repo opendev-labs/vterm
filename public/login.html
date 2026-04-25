@@ -7,6 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="vfx.js"></script>
     <style>
         body {
             background: radial-gradient(circle at top right, #1e293b, #0f172a);
@@ -280,11 +283,40 @@
                 const res = await fetch('/api/session');
                 const data = await res.json();
                 if (data.authenticated) {
-                    // Optionally auto-redirect or just stay here
+                    // Optionally auto-redirect
                 }
             } catch(e) {}
         }
-        checkSession();
+        
+        // Start Everything
+        window.addEventListener('load', () => {
+            initVFX();
+            checkSession();
+            
+            // Entrance Animations
+            anime.timeline({ easing: 'easeOutExpo' })
+                .add({
+                    targets: '.login-container',
+                    scale: [0.9, 1],
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    duration: 1200
+                })
+                .add({
+                    targets: '.logo',
+                    scale: [0, 1.2, 1],
+                    rotate: '1turn',
+                    duration: 1500,
+                    offset: '-=800'
+                })
+                .add({
+                    targets: '.choice-card',
+                    opacity: [0, 1],
+                    translateY: [10, 0],
+                    delay: anime.stagger(100),
+                    offset: '-=1000'
+                });
+        });
     </script>
 </body>
 </html>

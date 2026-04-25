@@ -32,6 +32,62 @@ async function initTerminal() {
     }
 
     setupSocketHandlers();
+    initVFX();
+    loadSettings();
+}
+
+// --- Settings Logic ---
+let currentSettings = {
+    theme: 'default',
+    fontSize: 15,
+    opacity: 80
+};
+
+const THEMES = {
+    default: { background: 'transparent', foreground: '#f1f5f9' },
+    matrix: { background: 'rgba(0, 20, 0, 0.8)', foreground: '#00ff00', cursor: '#00ff00' },
+    dracula: { background: 'rgba(40, 42, 54, 0.8)', foreground: '#f8f8f2', cursor: '#bd93f9' },
+    solarized: { background: 'rgba(253, 246, 227, 0.8)', foreground: '#657b83', cursor: '#268bd2' }
+};
+
+function toggleSettings() {
+    const panel = document.getElementById('settings-panel');
+    panel.classList.toggle('visible');
+}
+
+function applySettings() {
+    currentSettings.theme = document.getElementById('setting-theme').value;
+    currentSettings.fontSize = parseInt(document.getElementById('setting-font-size').value);
+    currentSettings.opacity = parseInt(document.getElementById('setting-opacity').value);
+
+    document.getElementById('font-size-val').innerText = currentSettings.fontSize;
+
+    // Apply to Terminal
+    if (term) {
+        term.options.fontSize = currentSettings.fontSize;
+        const theme = THEMES[currentSettings.theme] || THEMES.default;
+        term.options.theme = { ...term.options.theme, ...theme };
+        fitAddon.fit();
+    }
+
+    // Apply UI Opacity
+    document.getElementById('overlay').style.background = `rgba(30, 41, 59, ${currentSettings.opacity / 100})`;
+}
+
+function saveSettings() {
+    localStorage.setItem('vterm_settings', JSON.stringify(currentSettings));
+    toggleSettings();
+}
+
+function loadSettings() {
+    const saved = localStorage.getItem('vterm_settings');
+    if (saved) {
+        currentSettings = JSON.parse(saved);
+        document.getElementById('setting-theme').value = currentSettings.theme;
+        document.getElementById('setting-font-size').value = currentSettings.fontSize;
+        document.getElementById('setting-opacity').value = currentSettings.opacity;
+        applySettings();
+    }
 }
 
 function setupSocketHandlers() {
