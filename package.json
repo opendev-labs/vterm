@@ -1,7 +1,7 @@
 {
-  "name": "webterm",
+  "name": "vterm",
   "version": "1.0.0",
-  "description": "Production-ready browser-based terminal with real shell integration via node-pty",
+  "description": "Professional, high-performance Virtual Terminal for the web.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

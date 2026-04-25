@@ -1,8 +1,8 @@
 services:
   - type: web
-    name: webterm
+    name: vterm
     runtime: docker
-    repo: https://github.com/opendev-labs/webterm
+    repo: https://github.com/opendev-labs/vterm
     plan: free
     dockerfilePath: ./Dockerfile
     envVars:
