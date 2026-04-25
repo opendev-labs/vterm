@@ -2,6 +2,11 @@
   "name": "vterm",
   "version": "1.0.0",
   "description": "Professional, high-performance Virtual Terminal for the web.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opendev-labs/vterm.git"
+  },
+  "homepage": "https://vterm.onrender.com",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

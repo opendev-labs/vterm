@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
 
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`
-🚀 WebTerm is LIVE!
+🚀 VTerm is LIVE!
 ---------------------------------------------
 Environment: ${process.env.NODE_ENV || 'development'}
 Port: ${PORT}

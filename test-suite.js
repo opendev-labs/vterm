@@ -4,7 +4,7 @@ const http = require('http');
 const URL = 'http://localhost:4000';
 
 async function runTests() {
-    console.log('🚀 Starting Browser Terminal Diagnostic Suite...\n');
+    console.log('🚀 Starting VTerm Diagnostic Suite...\n');
 
     let marks = 0;
 
@@ -84,7 +84,7 @@ function finishTests(marks, socket) {
     console.log(`Final Score: ${finalScore} / ${total}`);
     
     if (finalScore >= 18) {
-        console.log('🏆 Perfect! Your Browser Terminal is production-ready.');
+        console.log('🏆 Perfect! Your VTerm is production-ready.');
     } else {
         console.log('🔧 Core functions are working, but check GUI for full marks.');
     }
