@@ -1,8 +1,9 @@
-FROM node:18-slim
+FROM node:22-slim
 
 # Install build & runtime dependencies in one layer
 RUN apt-get update && apt-get install -y \
     python3 \
+    python-is-python3 \
     make \
     g++ \
     bash \
@@ -19,7 +20,6 @@ COPY . .
 RUN npm run build
 
 # Use Render's preferred port 10000 as a fallback
-EXPOSE 4000
 EXPOSE 10000
 
 ENV NODE_ENV=production

@@ -5,8 +5,6 @@ services:
     plan: free
     dockerfilePath: ./Dockerfile
     envVars:
-      - key: PORT
-        value: 4000
       - key: NODE_ENV
         value: production
       - key: SESSION_SECRET
