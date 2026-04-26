@@ -13,7 +13,7 @@ const Home = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                    <div className="badge">Reliable & Fast</div>
+                    <div className="badge">v1.0.1 - Live Update</div>
                     <h1>V<span>Term</span></h1>
                     <p>A fast, secure terminal for your browser. Work from anywhere with zero lag.</p>
                     <div className="cta-group">

@@ -143,7 +143,7 @@ io.on('connection', (socket) => {
 
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`
-🚀 VTerm is LIVE!
+🚀 VTerm is LIVE! [v1.0.1]
 ---------------------------------------------
 Environment: ${process.env.NODE_ENV || 'development'}
 Port: ${PORT}
