@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Terminal as TerminalIcon, Plus, Settings, LogOut, X, Monitor, ChevronLeft, Sliders } from 'lucide-react';
+import { Terminal as TerminalIcon, Plus, Settings, LogOut, X, Monitor, ChevronLeft, Sliders, Menu, Search, MoreVertical } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Terminal from '../components/Terminal';
 
@@ -33,8 +33,8 @@ const AppShell = ({ mode: propMode }) => {
     };
 
     return (
-        <div className="app-shell" style={{ overflow: 'hidden', height: '100vh', background: '#000', position: 'relative' }}>
-            {/* Settings Modal Overlay */}
+        <div className="app-shell" style={{ overflow: 'hidden', height: '100vh', background: '#000', position: 'relative', fontFamily: 'Inter, sans-serif' }}>
+            {/* GNOME Settings Modal */}
             <AnimatePresence>
                 {isSettingsOpen && (
                     <motion.div 
@@ -46,8 +46,7 @@ const AppShell = ({ mode: propMode }) => {
                             position: 'fixed',
                             inset: 0,
                             zIndex: 2000,
-                            background: 'rgba(0, 0, 0, 0.7)',
-                            backdropFilter: 'blur(8px)',
+                            background: 'rgba(0, 0, 0, 0.5)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -56,70 +55,65 @@ const AppShell = ({ mode: propMode }) => {
                         onClick={() => setIsSettingsOpen(false)}
                     >
                         <motion.div 
-                            initial={{ scale: 0.9, y: 20, opacity: 0 }}
-                            animate={{ scale: 1, y: 0, opacity: 1 }}
-                            exit={{ scale: 0.9, y: 20, opacity: 0 }}
-                            className="settings-modal-card"
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.95, opacity: 0 }}
+                            className="gnome-dialog"
                             style={{
                                 width: '100%',
-                                maxWidth: '440px',
-                                background: 'rgba(15, 23, 42, 0.95)',
-                                border: '1px solid var(--accent)',
-                                borderRadius: '24px',
-                                padding: '40px',
-                                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-glow)'
+                                maxWidth: '400px',
+                                background: '#353535',
+                                border: '1px solid #454545',
+                                borderRadius: '12px',
+                                color: 'white',
+                                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                                overflow: 'hidden'
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div className="settings-header" style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <h2 style={{ fontSize: '24px', display: 'flex', alignItems: 'center', gap: '12px', color: 'white' }}>
-                                    <Sliders size={24} color="var(--accent)" /> Preferences
-                                </h2>
-                                <button 
-                                    onClick={() => setIsSettingsOpen(false)}
-                                    style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '50%', padding: '8px', cursor: 'pointer', color: 'white' }}
-                                >
-                                    <X size={20} />
-                                </button>
+                            <div style={{ padding: '16px', borderBottom: '1px solid #454545', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontWeight: 700, fontSize: '15px' }}>Terminal Preferences</span>
+                                <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer' }}><X size={18} /></button>
                             </div>
-
-                            <div className="settings-content">
-                                <div className="settings-group" style={{ marginBottom: '24px' }}>
-                                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-muted)' }}>Visual Environment</label>
+                            
+                            <div style={{ padding: '24px' }}>
+                                <div style={{ marginBottom: '20px' }}>
+                                    <label style={{ display: 'block', fontSize: '13px', marginBottom: '8px', color: '#aaa' }}>Appearance</label>
                                     <select 
                                         value={settings.theme} 
                                         onChange={(e) => applySettings({ ...settings, theme: e.target.value })}
-                                        className="input-field"
-                                        style={{ marginBottom: 0 }}
+                                        style={{ width: '100%', background: '#454545', border: '1px solid #555', color: 'white', padding: '8px', borderRadius: '6px', outline: 'none' }}
                                     >
-                                        <option value="default">VTerm Protocol (Default)</option>
-                                        <option value="matrix">Matrix Override</option>
-                                        <option value="dracula">Neon Night</option>
-                                        <option value="solarized">High Contrast</option>
+                                        <option value="default">VTerm (Default)</option>
+                                        <option value="matrix">Matrix</option>
+                                        <option value="dracula">Dracula</option>
+                                        <option value="solarized">Solarized Light</option>
                                     </select>
                                 </div>
-                                <div className="settings-group" style={{ marginBottom: '24px' }}>
-                                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-muted)' }}>Buffer Font Size ({settings.fontSize}px)</label>
+
+                                <div style={{ marginBottom: '20px' }}>
+                                    <label style={{ display: 'block', fontSize: '13px', marginBottom: '8px', color: '#aaa' }}>Text Size ({settings.fontSize}px)</label>
                                     <input 
-                                        type="range" 
-                                        min="10" max="24" 
-                                        value={settings.fontSize} 
+                                        type="range" min="10" max="24" value={settings.fontSize} 
                                         onChange={(e) => applySettings({ ...settings, fontSize: parseInt(e.target.value) })}
                                         style={{ width: '100%', accentColor: 'var(--accent)' }}
                                     />
                                 </div>
-                                <div className="settings-group" style={{ marginBottom: '32px' }}>
-                                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: 'var(--text-muted)' }}>UI Opacity ({settings.opacity}%)</label>
+
+                                <div style={{ marginBottom: '24px' }}>
+                                    <label style={{ display: 'block', fontSize: '13px', marginBottom: '8px', color: '#aaa' }}>Window Opacity</label>
                                     <input 
-                                        type="range" 
-                                        min="50" max="100" 
-                                        value={settings.opacity} 
+                                        type="range" min="50" max="100" value={settings.opacity} 
                                         onChange={(e) => applySettings({ ...settings, opacity: parseInt(e.target.value) })}
                                         style={{ width: '100%', accentColor: 'var(--accent)' }}
                                     />
                                 </div>
-                                <button className="btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => setIsSettingsOpen(false)}>
-                                    Save & Synchronize
+
+                                <button 
+                                    onClick={() => setIsSettingsOpen(false)}
+                                    style={{ width: '100%', background: '#38bdf8', color: '#000', border: 'none', padding: '12px', borderRadius: '6px', fontWeight: 700, cursor: 'pointer' }}
+                                >
+                                    Done
                                 </button>
                             </div>
                         </motion.div>
@@ -127,64 +121,82 @@ const AppShell = ({ mode: propMode }) => {
                 )}
             </AnimatePresence>
 
-            <div id="overlay" style={{ 
-                height: '48px',
-                background: `rgba(2, 6, 23, ${settings.opacity / 100})`,
-                borderBottom: '1px solid var(--border)',
-                backdropFilter: 'blur(10px)',
+            {/* GNOME HeaderBar */}
+            <div className="gnome-headerbar" style={{ 
+                height: '46px',
+                background: '#2d2d2d',
+                borderBottom: '1px solid #1a1a1a',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0 8px',
                 zIndex: 100
             }}>
-                <div className="header" style={{ height: '100%', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <button 
-                            className="header-btn" 
-                            onClick={() => navigate('/')}
-                            style={{ padding: '6px', marginRight: '4px' }}
-                            title="Back to Home"
-                        >
-                            <ChevronLeft size={20} />
-                        </button>
-                        
-                        <div className="tabs" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div className="tab active" style={{ 
-                                background: 'rgba(56, 189, 248, 0.1)', 
-                                border: '1px solid var(--accent)',
-                                borderRadius: '6px',
-                                height: '32px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                padding: '0 12px',
-                                color: 'white'
-                            }}>
-                                <Monitor size={14} style={{ marginRight: '8px' }} /> 
-                                <span className="mono" style={{ fontSize: '12px' }}>root@vterm:~</span>
-                            </div>
-                            <button 
-                                className="header-btn" 
-                                style={{ background: 'rgba(255,255,255,0.05)', padding: '6px', borderRadius: '6px' }}
-                                onClick={() => window.open(window.location.href, '_blank')}
-                            >
-                                <Plus size={16} />
-                            </button>
-                        </div>
-                    </div>
+                {/* Left Section */}
+                <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                    <button 
+                        onClick={() => navigate('/')}
+                        style={{ background: 'none', border: 'none', color: '#eee', padding: '6px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                        title="Back"
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                    <div style={{ width: '1px', height: '24px', background: '#454545', margin: '0 8px' }}></div>
+                    <button 
+                        style={{ background: 'none', border: 'none', color: '#eee', padding: '6px', borderRadius: '6px', cursor: 'pointer' }}
+                        onClick={() => window.open(window.location.href, '_blank')}
+                        title="New Tab"
+                    >
+                        <Plus size={18} />
+                    </button>
+                </div>
 
-                    <div className="title-container" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div className="title" style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                            MODE: <span style={{ color: 'var(--accent)' }}>{mode.toUpperCase()}</span>
-                        </div>
-                        <div style={{ width: '1px', height: '20px', background: 'var(--border)' }}></div>
-                        <button className="header-btn" onClick={() => setIsSettingsOpen(true)} title="Settings">
-                            <Settings size={18} />
-                        </button>
-                        <button className="header-btn logout-btn" onClick={handleLogout} title="Logout">
-                            <LogOut size={18} />
-                        </button>
+                {/* Center Section (Tabs) */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 2 }}>
+                    <div style={{ 
+                        background: '#353535', 
+                        height: '34px', 
+                        padding: '0 16px', 
+                        borderRadius: '6px 6px 0 0', 
+                        border: '1px solid #454545',
+                        borderBottom: 'none',
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px',
+                        color: '#eee',
+                        fontSize: '13px',
+                        minWidth: '160px'
+                    }}>
+                        <Monitor size={14} color="#38bdf8" />
+                        <span className="mono">root@vterm:~</span>
+                        <X size={12} style={{ marginLeft: 'auto', cursor: 'pointer', opacity: 0.6 }} />
                     </div>
+                </div>
+
+                {/* Right Section */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flex: 1, gap: '4px' }}>
+                    <button style={{ background: 'none', border: 'none', color: '#eee', padding: '6px', borderRadius: '6px', cursor: 'pointer' }} title="Search">
+                        <Search size={18} />
+                    </button>
+                    <button 
+                        onClick={() => setIsSettingsOpen(true)}
+                        style={{ background: 'none', border: 'none', color: '#eee', padding: '6px', borderRadius: '6px', cursor: 'pointer' }} 
+                        title="Menu"
+                    >
+                        <Menu size={18} />
+                    </button>
+                    <div style={{ width: '1px', height: '24px', background: '#454545', margin: '0 4px' }}></div>
+                    <button 
+                        onClick={handleLogout}
+                        style={{ background: 'none', border: 'none', color: '#ef4444', padding: '6px', borderRadius: '6px', cursor: 'pointer' }} 
+                        title="Logout"
+                    >
+                        <LogOut size={18} />
+                    </button>
                 </div>
             </div>
 
-            <div style={{ position: 'relative', height: 'calc(100vh - 48px)' }}>
+            {/* Terminal Container */}
+            <div style={{ position: 'relative', height: 'calc(100vh - 46px)' }}>
                 <Terminal mode={mode} target={target} settings={settings} />
             </div>
         </div>
