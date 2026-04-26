@@ -41,7 +41,9 @@ const App = () => {
                 <Route 
                     path="/app" 
                     element={
-                        isAuthenticated ? <AppShell /> : <Navigate to="/login" />
+                        (isAuthenticated || new URLSearchParams(window.location.search).get('mode') === 'local') 
+                            ? <AppShell /> 
+                            : <Navigate to="/login" />
                     } 
                 />
                 {/* Support for direct local bridge access via query params */}

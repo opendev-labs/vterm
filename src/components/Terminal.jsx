@@ -69,8 +69,8 @@ const Terminal = ({ mode, target, settings }) => {
         // Initialize Socket.io
         const socketUrl = (mode === 'local' && target) ? target : window.location.origin;
         const socket = io(socketUrl, {
-            transports: ['websocket'],
-            upgrade: false,
+            transports: ['websocket', 'polling'],
+            upgrade: true,
             reconnection: true,
             reconnectionAttempts: 5,
             reconnectionDelay: 1000

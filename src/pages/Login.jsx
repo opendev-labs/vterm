@@ -30,6 +30,7 @@ const Login = ({ onLogin }) => {
     };
 
     const handleLocalConnect = () => {
+        onLogin();
         navigate(`/app?mode=local&target=${encodeURIComponent(localUrl)}`);
     };
 
