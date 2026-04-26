@@ -37,9 +37,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Explicitly serve the React app for the home page
 app.get('/', (req, res) => {
     const distPath = path.join(__dirname, 'dist/index.html');
+    console.log(`[Server] Request for / - Checking build at: ${distPath}`);
     if (fs.existsSync(distPath)) {
         res.sendFile(distPath);
     } else {
+        console.error(`[Server] Build NOT found at: ${distPath}`);
         res.status(404).send("VTerm Engine Build not found. Deployment in progress...");
     }
 });
