@@ -2,9 +2,15 @@ services:
   - type: web
     name: vterm
     runtime: docker
-    repo: https://github.com/opendev-labs/vterm
     plan: free
     dockerfilePath: ./Dockerfile
     envVars:
       - key: PORT
         value: 4000
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        value: vterm123
+    autoDeploy: true
