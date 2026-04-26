@@ -34,6 +34,16 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Explicitly serve the React app for the home page
+app.get('/', (req, res) => {
+    const distPath = path.join(__dirname, 'dist/index.html');
+    if (fs.existsSync(distPath)) {
+        res.sendFile(distPath);
+    } else {
+        res.status(404).send("VTerm Engine Build not found. Deployment in progress...");
+    }
+});
+
 // App access guard (Updated for React)
 app.get('/app', (req, res) => {
     if (req.query.mode === 'local' || (req.session && req.session.authenticated)) {
