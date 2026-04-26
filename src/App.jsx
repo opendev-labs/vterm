@@ -6,6 +6,18 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import AppShell from './pages/AppShell';
 import Docs from './pages/Docs';
+import { useLocation } from 'react-router-dom';
+
+const ProtectedRoute = ({ children, isAuthenticated }) => {
+    const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    const isLocal = query.get('mode') === 'local';
+    
+    if (isAuthenticated || isLocal) {
+        return children;
+    }
+    return <Navigate to="/login" replace />;
+};
 
 const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -41,9 +53,9 @@ const App = () => {
                 <Route 
                     path="/app" 
                     element={
-                        (isAuthenticated || new URLSearchParams(window.location.search).get('mode') === 'local') 
-                            ? <AppShell /> 
-                            : <Navigate to="/login" />
+                        <ProtectedRoute isAuthenticated={isAuthenticated}>
+                            <AppShell />
+                        </ProtectedRoute>
                     } 
                 />
                 {/* Support for direct local bridge access via query params */}
