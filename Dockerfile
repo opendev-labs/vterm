@@ -12,7 +12,7 @@ WORKDIR /app
 
 # Copy package files and install ALL dependencies (including dev for building)
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy source and build the React app
 COPY . .
