@@ -57,11 +57,9 @@ function startServer() {
         // Port free
     }
 
-    // Ensure build exists
-    if (!fs.existsSync(path.join(rootDir, 'dist'))) {
-        console.log('\x1b[1;33m[Bridge] First-time setup: Building local assets...\x1b[0m');
-        execSync('npm run build', { cwd: rootDir, stdio: 'inherit' });
-    }
+    // Always rebuild to ensure latest changes are served
+    console.log('\x1b[1;33m[Bridge] Synchronizing latest assets...\x1b[0m');
+    execSync('npm run build', { cwd: rootDir, stdio: 'inherit' });
 
     console.log(`\x1b[1;32m🚀 VTerm Local Engine is initializing on port ${port}...\x1b[0m`);
     

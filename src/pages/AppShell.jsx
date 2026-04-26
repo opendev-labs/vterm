@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Terminal as TerminalIcon, Plus, Settings, LogOut, X, Monitor } from 'lucide-react';
+import { Terminal as TerminalIcon, Settings, LogOut, X } from 'lucide-react';
 import Terminal from '../components/Terminal';
 
 const AppShell = ({ mode: propMode }) => {
@@ -95,7 +95,7 @@ const AppShell = ({ mode: propMode }) => {
                             height: '32px',
                             color: 'white'
                         }}>
-                            <Monitor size={14} style={{ marginRight: '8px' }} /> 
+                            <TerminalIcon size={14} style={{ marginRight: '8px' }} /> 
                             <span className="mono" style={{ fontSize: '12px' }}>root@vterm:~</span>
                         </div>
                         <button 
@@ -103,7 +103,7 @@ const AppShell = ({ mode: propMode }) => {
                             style={{ marginLeft: '12px', background: 'rgba(255,255,255,0.05)', padding: '6px', borderRadius: '6px' }}
                             onClick={() => window.open(window.location.href, '_blank')}
                         >
-                            <Plus size={16} />
+                            <TerminalIcon size={16} />
                         </button>
                     </div>
                     <div className="title-container">

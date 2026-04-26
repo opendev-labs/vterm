@@ -6,18 +6,6 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import AppShell from './pages/AppShell';
 import Docs from './pages/Docs';
-import { useLocation } from 'react-router-dom';
-
-const ProtectedRoute = ({ children, isAuthenticated }) => {
-    const location = useLocation();
-    const query = new URLSearchParams(location.search);
-    const isLocal = query.get('mode') === 'local';
-    
-    if (isAuthenticated || isLocal) {
-        return children;
-    }
-    return <Navigate to="/login" replace />;
-};
 
 const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -48,24 +36,20 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login onLogin={() => setIsAuthenticated(true)} />} />
                 <Route path="/docs" element={<Docs />} />
-                {/* Legacy support for .html extension mentioned by user */}
                 <Route path="/docs.html" element={<Navigate to="/docs" replace />} />
                 <Route 
                     path="/app" 
                     element={
-                        <ProtectedRoute isAuthenticated={isAuthenticated}>
-                            <AppShell />
-                        </ProtectedRoute>
+                        (isAuthenticated || window.location.search.includes('mode=local')) 
+                            ? <AppShell /> 
+                            : <Navigate to="/login" />
                     } 
                 />
-                {/* Support for direct local bridge access via query params */}
                 <Route path="/bridge" element={<AppShell mode="local" />} />
-                {/* Catch-all for unknown routes */}
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </Router>
     );
 };
-
 
 export default App;
