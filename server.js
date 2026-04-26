@@ -44,7 +44,7 @@ app.get('/app', (req, res) => {
 });
 
 // React Router fallback: Serve index.html for any unknown routes
-app.get('*', (req, res, next) => {
+app.get('(.*)', (req, res, next) => {
     // If it's an API route, skip
     if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) {
         return next();
