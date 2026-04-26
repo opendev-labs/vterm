@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
@@ -12,6 +12,23 @@ console.log(`
 `);
 
 function startServer() {
+    // Automation: Check if port 4000 is in use
+    try {
+        const stdout = execSync('lsof -i :4000 -t').toString().trim();
+        if (stdout) {
+            console.log(`\x1b[1;33m[Auto] Port 4000 is in use by PID ${stdout}. Clearing port...\x1b[0m`);
+            execSync(`kill -9 ${stdout}`);
+        }
+    } catch (e) {
+        // Port is free or lsof failed, ignore
+    }
+
+    // Automation: Check if dist exists
+    if (!fs.existsSync(path.join(rootDir, 'dist'))) {
+        console.log('\x1b[1;33m[Auto] React build missing. Building app now...\x1b[0m');
+        execSync('npm run build', { cwd: rootDir, stdio: 'inherit' });
+    }
+
     console.log('\x1b[1;32m🚀 Starting VTerm Local Engine...\x1b[0m');
     
     const server = spawn('node', ['server.js'], {
@@ -29,23 +46,22 @@ function startServer() {
     });
 
     server.on('close', (code) => {
-        console.log(`\x1b[1;33m[Process] VTerm exited with code ${code}\x1b[0m`);
+        if (code !== 0 && code !== null) {
+            console.log(`\x1b[1;31m[Process] VTerm exited with error code ${code}\x1b[0m`);
+        }
     });
 }
 
 // Automation: Check for node_modules
 if (!fs.existsSync(path.join(rootDir, 'node_modules'))) {
     console.log('\x1b[1;33m[Auto] Dependencies missing. Installing now...\x1b[0m');
-    const install = spawn('npm', ['install'], { cwd: rootDir, stdio: 'inherit' });
-    
-    install.on('close', (code) => {
-        if (code === 0) {
-            console.log('\x1b[1;32m[Auto] Installation successful.\x1b[0m');
-            startServer();
-        } else {
-            console.error('\x1b[1;31m[Auto] Installation failed. Please run "npm install" manually.\x1b[0m');
-        }
-    });
+    try {
+        execSync('npm install', { cwd: rootDir, stdio: 'inherit' });
+        console.log('\x1b[1;32m[Auto] Installation successful.\x1b[0m');
+        startServer();
+    } catch (e) {
+        console.error('\x1b[1;31m[Auto] Installation failed. Please run "npm install" manually.\x1b[0m');
+    }
 } else {
     startServer();
 }

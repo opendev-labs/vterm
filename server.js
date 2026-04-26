@@ -44,16 +44,21 @@ app.get('/app', (req, res) => {
 });
 
 // React Router fallback: Serve index.html for any unknown routes
-app.get('(.*)', (req, res, next) => {
-    // If it's an API route, skip
+app.use((req, res, next) => {
+    // Skip if it's an API route or socket.io
     if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) {
         return next();
     }
+    
+    // Also skip if it's a request for a static file that might exist in dist or public
+    if (path.extname(req.path)) {
+        return next();
+    }
+
     const distPath = path.join(__dirname, 'dist/index.html');
     if (fs.existsSync(distPath)) {
         res.sendFile(distPath);
     } else {
-        // Fallback to local dev message or the old public folder if dist doesn't exist yet
         res.status(404).send("React build not found. Run 'npm run build' first.");
     }
 });
