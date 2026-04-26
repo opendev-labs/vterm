@@ -4,6 +4,7 @@ const { Server } = require('socket.io');
 const pty = require('node-pty');
 const path = require('path');
 const os = require('os');
+const fs = require('fs');
 
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
@@ -30,22 +31,30 @@ app.use(session({
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
 }));
 
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Root redirect logic
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
+// App access guard (Updated for React)
+app.get('/app', (req, res) => {
+    if (req.query.mode === 'local' || (req.session && req.session.authenticated)) {
+        res.sendFile(path.join(__dirname, 'dist/index.html'));
+    } else {
+        res.redirect('/login');
+    }
 });
 
-// App access guard
-app.get('/app.html', (req, res) => {
-    if (req.query.mode === 'local') {
-        // Allow access to UI if connecting to local
-        res.sendFile(path.join(__dirname, 'public/app.html'));
-    } else if (req.session && req.session.authenticated) {
-        res.sendFile(path.join(__dirname, 'public/app.html'));
+// React Router fallback: Serve index.html for any unknown routes
+app.get('*', (req, res, next) => {
+    // If it's an API route, skip
+    if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) {
+        return next();
+    }
+    const distPath = path.join(__dirname, 'dist/index.html');
+    if (fs.existsSync(distPath)) {
+        res.sendFile(distPath);
     } else {
-        res.redirect('/login.html');
+        // Fallback to local dev message or the old public folder if dist doesn't exist yet
+        res.status(404).send("React build not found. Run 'npm run build' first.");
     }
 });
 
