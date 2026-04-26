@@ -34,22 +34,23 @@ VTerm allows you to use its professional UI to access your local machine's termi
 
 ---
 
-## 🚀 Deployment (100% FREE, No Credit Card)
+## 🚀 Deployment (High-Performance Cloud)
 
 ### Deploy to Render.com:
-1.  **Push to GitHub**:
+VTerm is optimized for [Render](https://render.com) using Docker for maximum performance and security.
+
+1.  **Push Latest Changes**:
     ```bash
     git add .
-    git commit -m "Update for VTerm rebranding"
+    git commit -m "🚀 Finalize performance optimizations"
     git push origin main
     ```
-2.  **Sign up on [Render.com](https://render.com)** using your GitHub account.
-3.  **Create New Web Service**:
-    - Connect the `vterm` repository.
-    - Set **Environment** to `Docker`.
-    - Choose **Free Plan**.
+2.  **Create Web Service**:
+    - Connect your GitHub repository.
+    - Ensure the **Environment** is set to `Docker`.
+    - Render will automatically use the `Dockerfile` and `render.yaml`.
 
-**Your live terminal will be at**: `https://vterm.onrender.com`
+**Live Terminal Instance**: `https://vterm.onrender.com`
 
 ---
 
