@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Terminal as Xterm } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import { WebglAddon } from 'xterm-addon-webgl';
+import { CanvasAddon } from 'xterm-addon-canvas';
+import { Unicode11Addon } from 'xterm-addon-unicode11';
 import { io } from 'socket.io-client';
 import 'xterm/css/xterm.css';
 
@@ -18,20 +21,47 @@ const Terminal = ({ mode, target, settings }) => {
     const fitAddonRef = useRef();
 
     useEffect(() => {
-        // Initialize Xterm.js
+        // Initialize Xterm.js with performance optimizations
         const term = new Xterm({
             cursorBlink: true,
             fontFamily: '"JetBrains Mono", monospace',
             fontSize: settings.fontSize || 15,
             theme: THEMES[settings.theme] || THEMES.default,
-            allowTransparency: true
+            allowTransparency: true,
+            scrollback: 5000,
+            fastScrollModifier: 'alt',
+            screenReaderMode: false,
+            // Enable GPU acceleration hint
+            rendererType: 'canvas' // Fallback, we'll try to load WebGL addon
         });
 
         const fitAddon = new FitAddon();
         term.loadAddon(fitAddon);
         
+        // Load Unicode11 addon for better rendering of complex characters
+        term.loadAddon(new Unicode11Addon());
+        term.unicode.activeVersion = '11';
+
         term.open(terminalRef.current);
         fitAddon.fit();
+
+        // Try to initialize WebGL Hardware Acceleration
+        try {
+            const webglAddon = new WebglAddon();
+            webglAddon.onContextLoss(e => {
+                webglAddon.dispose();
+            });
+            term.loadAddon(webglAddon);
+            console.log('🚀 Terminal: WebGL Hardware Acceleration Enabled');
+        } catch (e) {
+            console.warn('⚠️ Terminal: WebGL failed, falling back to Canvas renderer', e);
+            try {
+                term.loadAddon(new CanvasAddon());
+                console.log('🚀 Terminal: Canvas Renderer Enabled');
+            } catch (canvasErr) {
+                console.error('❌ Terminal: All advanced renderers failed', canvasErr);
+            }
+        }
 
         xtermRef.current = term;
         fitAddonRef.current = fitAddon;
@@ -40,7 +70,10 @@ const Terminal = ({ mode, target, settings }) => {
         const socketUrl = (mode === 'local' && target) ? target : window.location.origin;
         const socket = io(socketUrl, {
             transports: ['websocket'],
-            upgrade: false
+            upgrade: false,
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000
         });
 
         socketRef.current = socket;
@@ -64,8 +97,10 @@ const Terminal = ({ mode, target, settings }) => {
         });
 
         const handleResize = () => {
-            fitAddon.fit();
-            socket.emit('resize', { cols: term.cols, rows: term.rows });
+            if (fitAddonRef.current) {
+                fitAddonRef.current.fit();
+                socket.emit('resize', { cols: term.cols, rows: term.rows });
+            }
         };
 
         window.addEventListener('resize', handleResize);
@@ -90,17 +125,20 @@ const Terminal = ({ mode, target, settings }) => {
     return (
         <div 
             ref={terminalRef} 
+            className="terminal-container"
             style={{ 
                 position: 'absolute', 
-                top: '44px', 
+                top: 0, 
                 left: 0, 
                 right: 0, 
                 bottom: 0, 
                 padding: '12px',
-                background: '#000'
+                background: '#000',
+                overflow: 'hidden'
             }} 
         />
     );
 };
 
 export default Terminal;
+
